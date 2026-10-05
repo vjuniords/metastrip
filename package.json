@@ -1,0 +1,15 @@
+{
+  "name": "metastrip",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Inspect and remove image metadata (EXIF, GPS, XMP, IPTC, C2PA) 100% in your browser.",
+  "license": "MIT",
+  "packageManager": "pnpm@10.0.0",
+  "scripts": {
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "build": "pnpm -r --if-present build",
+    "dev:ext": "pnpm --filter @metastrip/extension dev",
+    "dev:web": "pnpm --filter @metastrip/web dev"
+  }
+}

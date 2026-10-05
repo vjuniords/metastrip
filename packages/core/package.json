@@ -1,0 +1,20 @@
+{
+  "name": "@metastrip/core",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^5.6.0",
+    "vitest": "^4.0.0"
+  }
+}
