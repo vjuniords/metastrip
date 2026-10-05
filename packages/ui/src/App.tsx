@@ -244,14 +244,31 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
           />
 
           {items.length > 0 && (
-            <div className="flex items-center justify-between">
-              <button onClick={() => items.forEach((i) => removeItem(i.id))} className="btn-ghost text-xs">
-                <Trash2 className="size-3.5" /> {t.clear}
-              </button>
-              {ready.length > 1 && (
-                <button onClick={downloadAllAsZip} disabled={zipping} className="btn-primary text-xs">
+            <div className="flex flex-col gap-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3">
+              <div className="flex items-center justify-between text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+                <span>
+                  {ready.length === 0
+                    ? t.processing
+                    : ready.length === 1
+                      ? '1 imagem pronta'
+                      : `${ready.length} imagens prontas`}
+                </span>
+                <button onClick={() => items.forEach((i) => removeItem(i.id))} className="text-zinc-500 hover:text-red-500 transition text-[11px] flex items-center gap-1">
+                  <Trash2 className="size-3" /> {t.clear}
+                </button>
+              </div>
+              {ready.length > 0 && (
+                <button
+                  onClick={downloadAllAsZip}
+                  disabled={zipping}
+                  className="btn-primary w-full py-2 text-xs font-semibold flex items-center justify-center gap-2 shadow-sm"
+                >
                   {zipping ? <Loader2 className="size-3.5 animate-spin" /> : <Archive className="size-3.5" />}
-                  {zipping ? t.processing : `${t.downloadAll} (${ready.length})`}
+                  {zipping
+                    ? t.processing
+                    : ready.length === 1
+                      ? `${t.downloadZip}`
+                      : `${t.downloadAllZip} (${ready.length})`}
                 </button>
               )}
             </div>
