@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   AlertTriangle,
+  Archive,
   Download,
   ExternalLink,
   ImagePlus,
@@ -11,6 +12,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
+import { zipSync } from 'fflate';
 import type { InspectReport } from '@metastrip/core';
 import { KIND_LABEL, SIGNAL_LABEL, getDict, type Dict } from './i18n';
 import {
@@ -118,6 +120,42 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
     });
 
   const ready = items.filter((i) => i.status === 'ready');
+  const [zipping, setZipping] = useState(false);
+
+  const downloadAllAsZip = async () => {
+    if (ready.length === 0 || zipping) return;
+    setZipping(true);
+    try {
+      const filesToZip: Record<string, Uint8Array> = {};
+      const usedNames = new Set<string>();
+
+      for (const item of ready) {
+        patch(item.id, { status: 'working' });
+        const out = await processFile(item.file, opts);
+        let name = out.fileName;
+        let counter = 1;
+        while (usedNames.has(name)) {
+          const dot = out.fileName.lastIndexOf('.');
+          const base = dot > 0 ? out.fileName.slice(0, dot) : out.fileName;
+          const ext = dot > 0 ? out.fileName.slice(dot) : '';
+          name = `${base}_${counter}${ext}`;
+          counter++;
+        }
+        usedNames.add(name);
+        const buf = new Uint8Array(await out.blob.arrayBuffer());
+        filesToZip[name] = buf;
+        patch(item.id, { status: 'ready' });
+      }
+
+      const zipped = zipSync(filesToZip);
+      const zipBlob = new Blob([zipped as Uint8Array<ArrayBuffer>], { type: 'application/zip' });
+      triggerDownload(zipBlob, `metastrip-limpas-${Date.now().toString().slice(-6)}.zip`);
+    } catch (e) {
+      console.error('[MetaStrip] Zip error:', e);
+    } finally {
+      setZipping(false);
+    }
+  };
 
   return (
     <div
@@ -211,8 +249,9 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
                 <Trash2 className="size-3.5" /> {t.clear}
               </button>
               {ready.length > 1 && (
-                <button onClick={() => ready.forEach(download)} className="btn-primary text-xs">
-                  <Download className="size-3.5" /> {t.downloadAll} ({ready.length})
+                <button onClick={downloadAllAsZip} disabled={zipping} className="btn-primary text-xs">
+                  {zipping ? <Loader2 className="size-3.5 animate-spin" /> : <Archive className="size-3.5" />}
+                  {zipping ? t.processing : `${t.downloadAll} (${ready.length})`}
                 </button>
               )}
             </div>
