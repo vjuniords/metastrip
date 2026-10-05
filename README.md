@@ -41,10 +41,10 @@ apps/web            Public website (Next.js static export) — coming next.
 pnpm install
 pnpm test          # core unit tests + fuzzing
 pnpm dev:ext       # opens Chrome with the extension loaded (hot reload)
-pnpm --filter @metastrip/extension build   # production build in apps/extension/.output
+pnpm --filter @metastrip/extension build   # production build in apps/extension/dist
 ```
 
-Load manually: `chrome://extensions` → *Developer mode* → *Load unpacked* → `apps/extension/.output/chrome-mv3`.
+Load manually: `chrome://extensions` → *Developer mode* → *Load unpacked* → `apps/extension/dist/chrome-mv3`.
 
 ## Security
 

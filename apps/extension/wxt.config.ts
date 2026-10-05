@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  outDir: 'dist',
   vite: () => ({ plugins: [tailwindcss()] }),
   manifest: {
     name: 'MetaStrip — Image Metadata Cleaner',

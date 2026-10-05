@@ -15,4 +15,4 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm --filter @metastrip/extension zip
       - uses: actions/upload-artifact@v4
-        with: { name: extension, path: apps/extension/.output/*.zip }
+        with: { name: extension, path: apps/extension/dist/*.zip }
