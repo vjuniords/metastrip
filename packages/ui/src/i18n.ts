@@ -119,8 +119,10 @@ export const SIGNAL_LABEL: Record<AiSignal, string> = {
   'a1111-parameters': 'A1111 prompt',
 };
 
-export function getDict(lang = typeof navigator !== 'undefined' ? navigator.language : 'en'): Dict {
-  return lang.toLowerCase().startsWith('pt') ? pt : en;
+export type Lang = 'pt' | 'en';
+
+export function getDict(lang: Lang = 'pt'): Dict {
+  return lang === 'en' ? en : pt;
 }
 
 export type { Dict };

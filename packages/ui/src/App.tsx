@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { zipSync } from 'fflate';
 import type { InspectReport } from '@metastrip/core';
-import { KIND_LABEL, SIGNAL_LABEL, getDict, type Dict } from './i18n';
+import { KIND_LABEL, SIGNAL_LABEL, getDict, type Dict, type Lang } from './i18n';
 import {
   DEFAULT_OPTIONS,
   analyze,
@@ -54,7 +54,25 @@ function loadOptions(): ProcessOptions {
 }
 
 export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps) {
-  const t = useMemo(() => getDict(), []);
+  const [lang, setLang] = useState<Lang>(() => {
+    try {
+      const saved = localStorage.getItem('metastrip:lang');
+      if (saved === 'pt' || saved === 'en') return saved;
+      return 'pt'; // Padrão brasileiro
+    } catch {
+      return 'pt';
+    }
+  });
+
+  const t = useMemo(() => getDict(lang), [lang]);
+
+  const toggleLang = () => {
+    const next = lang === 'pt' ? 'en' : 'pt';
+    setLang(next);
+    try {
+      localStorage.setItem('metastrip:lang', next);
+    } catch {}
+  };
   const [items, setItems] = useState<Item[]>([]);
   const [opts, setOpts] = useState<ProcessOptions>(loadOptions);
   const [dragging, setDragging] = useState(false);
@@ -181,11 +199,21 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
             <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.tagline}</p>
           </div>
         </div>
-        {onOpenFull && (
-          <button onClick={onOpenFull} className="btn-ghost" title={t.openTab} aria-label={t.openTab}>
-            <ExternalLink className="size-4" />
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={toggleLang}
+            className="inline-flex items-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white/70 dark:bg-zinc-800/70 px-2 py-1 text-xs font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+            title={lang === 'pt' ? 'Mudar para Inglês' : 'Switch to Portuguese'}
+          >
+            {lang === 'pt' ? '🇧🇷 PT' : '🇺🇸 EN'}
           </button>
-        )}
+          {onOpenFull && (
+            <button onClick={onOpenFull} className="btn-ghost" title={t.openTab} aria-label={t.openTab}>
+              <ExternalLink className="size-4" />
+            </button>
+          )}
+        </div>
       </header>
 
       <div className={isCompact ? 'flex flex-col gap-4' : 'grid gap-6 lg:grid-cols-[1fr_300px]'}>

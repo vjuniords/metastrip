@@ -1,110 +1,114 @@
-# MetaStrip
+# MetaStrip 🇧🇷
 
 <p align="center">
-  <strong>Inspect and remove hidden image metadata — 100% in your browser.</strong><br>
-  EXIF · GPS Coordinates · XMP · IPTC · C2PA Content Credentials · AI Generator Signatures
+  <strong>Inspecione e remova metadados ocultos de imagens — 100% no seu navegador.</strong><br>
+  EXIF · Coordenadas GPS · XMP · IPTC · Certificados C2PA de IA · Assinaturas de Geradores
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-emerald.svg" alt="License MIT">
-  <img src="https://img.shields.io/badge/Platform-Chrome%20%7C%20Edge%20%7C%20Brave-blue.svg" alt="Platform">
+  <a href="README.en.md">🇺🇸 <strong>Read this documentation in English</strong></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Licen%C3%A7a-MIT-emerald.svg" alt="Licença MIT">
+  <img src="https://img.shields.io/badge/Plataforma-Chrome%20%7C%20Edge%20%7C%20Brave-blue.svg" alt="Plataforma">
   <img src="https://img.shields.io/badge/Manifest-V3-purple.svg" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Privacy-100%25%20Local-success.svg" alt="100% Local">
+  <img src="https://img.shields.io/badge/Privacidade-100%25%20Local-success.svg" alt="100% Local">
+  <img src="https://img.shields.io/badge/Idioma-PT--BR%20%2F%20EN-orange.svg" alt="Bilíngue">
 </p>
-
-> 🇧🇷 **Inspecione e remova metadados ocultos de imagens — 100% no seu navegador.** Nada é enviado para servidores externos.
 
 ---
 
 <p align="center">
-  <img src="docs/images/sidepanel.png" alt="MetaStrip Chrome Side Panel" width="380" />
+  <img src="docs/images/sidepanel.png" alt="Painel Lateral do MetaStrip no Chrome" width="380" />
 </p>
 
 ---
 
-## Why MetaStrip?
+## Por que o MetaStrip foi criado?
 
-When you generate images on **ChatGPT, Midjourney, Adobe Firefly, Canva** or take photos on your smartphone, the image file carries hidden data beyond its visible pixels:
-- **C2PA Manifests & IPTC tags (`trainedAlgorithmicMedia`):** Cryptographic signatures embedded by AI providers that trigger automated labels on social platforms like Facebook and Instagram (*"Info de IA"* / *"Made with AI"*).
-- **Private Data:** Camera hardware serials, exact GPS coordinates, creation timestamps, and editing history.
-- **Generation Prompts:** In tools like Stable Diffusion / ComfyUI / Automatic1111, the entire text prompt and parameters are saved in PNG chunks (`parameters`).
+Ao gerar imagens no **ChatGPT, Midjourney, Adobe Firefly, Canva** ou tirar fotos no celular, o arquivo carrega dados ocultos além dos pixels visíveis:
+- **Manifestos C2PA e tags IPTC (`trainedAlgorithmicMedia`):** Assinaturas criptográficas embutidas por ferramentas de IA que ativam rótulos automáticos em redes sociais como Facebook e Instagram (*"Info de IA"* / *"Feito com IA"*).
+- **Dados Privados:** Número de série da câmera, localização exata por GPS, data/hora de captura e histórico de edições.
+- **Prompts de Geração:** No Stable Diffusion, ComfyUI ou Automatic1111, o prompt completo e os parâmetros ficam gravados nos blocos de texto do PNG (`parameters`).
 
-**MetaStrip** inspects the raw file structures, lists every chunk, and strips them cleanly without ever sending a single byte to an external server.
-
----
-
-## Key Features
-
-- 📌 **Native Chrome Side Panel:** Docks conveniently on the side of your browser (like Mimik). You can browse ChatGPT or Midjourney and drag images directly from the web page into MetaStrip!
-- 🔍 **Deep Inspector:** Detects C2PA (`caBX` chunk / APP11), IPTC `DigitalSourceType`, EXIF, GPS, and XMP.
-- 🧼 **Lossless Cleaning:** Surgically removes metadata containers while copying pixel scans byte-for-byte (100% original fidelity).
-- 🎨 **Re-render Mode:** Generates a fresh raster image with presets optimized for social media feeds (`1080×1080` 1:1, `1080×1350` 4:5, `1080×1920` Stories).
-- 📦 **Batch Download (.ZIP):** Drop 2 or 50 images at once and download all cleaned images bundled into a single `.zip` file in one click.
-- 🖱️ **Context Menu:** Right-click any image on the web ➔ *"Baixar sem metadados (MetaStrip)"*.
-- 🔒 **Zero Server / Privacy First:** 100% client-side via pure TypeScript and Web APIs. Compliant with strict CSP (`script-src 'self'`).
+O **MetaStrip** inspeciona a estrutura dos arquivos, lista cada bloco encontrado e remove tudo de forma cirúrgica, sem enviar nenhum byte para servidores externos.
 
 ---
 
-## What MetaStrip Does *Not* Do
+## Principais Funcionalidades
 
-MetaStrip strips **container metadata**. It does **not** alter invisible steganographic pixel watermarks (e.g. Google DeepMind SynthID). Please adhere to local regulations and platform terms regarding disclosure of photorealistic AI media.
+- 📌 **Painel Lateral Nativo do Chrome:** Fica acoplado na lateral do navegador (igual ao Mimik). Você pode navegar no ChatGPT ou Midjourney e arrastar as imagens direto da página para dentro do MetaStrip!
+- 🔍 **Inspetor Profundo:** Detecta manifestos C2PA (bloco `caBX` em PNG / APP11 em JPEG), tags IPTC `DigitalSourceType`, EXIF, GPS e XMP.
+- 🧼 **Limpeza Sem Perdas (Lossless):** Remove apenas os metadados mantendo a compressão original dos pixels idêntica (100% da qualidade original preservada).
+- 🎨 **Modo Recriar Imagem:** Gera uma nova imagem limpa do zero com presets otimizados para redes sociais (`1080×1080` Feed 1:1, `1080×1350` Feed 4:5, `1080×1920` Stories).
+- 📦 **Download em Lote (.ZIP):** Arraste várias imagens de uma vez e baixe todas limpas em um único arquivo `.zip` com 1 clique.
+- 🖱️ **Menu de Contexto:** Clique com o botão direito em qualquer imagem da web ➔ *"Baixar sem metadados (MetaStrip)"*.
+- 🌐 **100% Bilíngue (PT-BR / EN):** Alterne entre Português e Inglês com 1 clique direto no topo da extensão.
+- 🔒 **Privacidade Total:** Processamento 100% no cliente via TypeScript e Web APIs. Zero servidores, zero rastreamento.
 
 ---
 
-## Project Structure
+## O que o MetaStrip *Não* Faz
+
+O MetaStrip remove **metadados e manifestos de cabeçalho**. Ele **não** altera marcas d'água esteganográficas invisíveis nos próprios pixels (como o Google DeepMind SynthID). Respeite sempre as políticas das plataformas sobre identificação de mídias fotorrealistas geradas por inteligência artificial.
+
+---
+
+## Estrutura do Projeto
 
 ```
 MetaStrip/
 ├── packages/
-│   ├── core/         # Pure TypeScript parser & sanitizer (JPEG, PNG, WebP). 0 dependencies, no DOM.
-│   └── ui/           # Shared React 19 + Tailwind CSS interface & batch zip handler.
+│   ├── core/         # Motor em TypeScript puro para JPEG, PNG e WebP (zero dependências, sem DOM).
+│   └── ui/           # Interface compartilhada em React 19 + Tailwind CSS, bilíngue e gerador de ZIP.
 ├── apps/
-│   ├── extension/    # Manifest V3 extension (WXT framework) with Side Panel & context menu.
-│   └── web/          # Public web application (Next.js static export).
-└── docs/             # Architecture, screenshots and documentation.
+│   ├── extension/    # Extensão Manifest V3 (WXT) com Painel Lateral e menu de contexto.
+│   └── web/          # Aplicação web pública (Next.js com exportação estática).
+└── docs/             # Imagens, arquitetura e documentação.
 ```
 
 ---
 
-## Getting Started
+## Como Usar
 
-### Option 1: Quick Install (Extension)
+### Opção 1: Instalação Rápida no Chrome / Brave / Edge
 
-1. Download the latest `metastrip-x.x.x-chrome.zip` from [Releases](https://github.com/vjuniords/metastrip/releases).
-2. Unzip the file.
-3. Open `chrome://extensions` in Chrome, Brave or Edge.
-4. Enable **Developer mode** (top right).
-5. Click **Load unpacked** and select the unzipped `chrome-mv3` folder.
-6. Click the MetaStrip icon in your extensions toolbar to open the Side Panel!
+1. Baixe o arquivo `metastripextension-0.1.0-chrome.zip` na página de [Releases](https://github.com/vjuniords/metastrip/releases).
+2. Descompacte o arquivo `.zip` no seu computador.
+3. Abra `chrome://extensions` no navegador.
+4. Ative o **Modo do desenvolvedor** (canto superior direito).
+5. Clique em **Carregar sem compactação** e selecione a pasta descompactada `chrome-mv3`.
+6. Clique no ícone do MetaStrip na barra de extensões para abrir o Painel Lateral!
 
-### Option 2: Development
+### Opção 2: Desenvolvimento Local
 
 ```bash
-# Clone the repository
+# Clone o repositório
 git clone https://github.com/vjuniords/metastrip.git
 cd metastrip
 
-# Install dependencies
+# Instale as dependências
 pnpm install
 
-# Run unit tests and fuzzing
+# Execute os testes unitários e de robustez
 pnpm test
 
-# Run extension in live development mode (opens Chrome with hot-reload)
+# Inicie a extensão em modo desenvolvimento (abre o Chrome com recarregamento automático)
 pnpm dev:ext
 
-# Build production bundle
+# Gere o pacote de produção
 pnpm --filter @metastrip/extension build
 ```
 
 ---
 
-## Security & Ethics
+## Segurança e Privacidade
 
-Read our [Security Policy](SECURITY.md). All parsers enforce strict byte bounds checks and fuzz testing against corrupted files. File processing is capped at 100 MB.
+Consulte nossa [Política de Segurança](SECURITY.md). O motor possui validação estrita de limites de bytes e testes com arquivos corrompidos para garantir estabilidade. O tamanho máximo por arquivo é de 100 MB.
 
 ---
 
-## License
+## Licença
 
-[MIT License](LICENSE) © 2026 MetaStrip contributors.
+Distribuído sob a licença [MIT](LICENSE) © 2026 Contribuidores do MetaStrip.
