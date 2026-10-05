@@ -35,8 +35,8 @@ interface Item {
 }
 
 export interface MetaStripAppProps {
-  variant?: 'popup' | 'page';
-  /** Shown in the popup header to open the full-tab view. */
+  variant?: 'popup' | 'sidepanel' | 'page';
+  /** Shown in the header to open the full-tab view. */
   onOpenFull?: () => void;
 }
 
@@ -57,7 +57,8 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
   const [opts, setOpts] = useState<ProcessOptions>(loadOptions);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const popup = variant === 'popup';
+  const isCompact = variant === 'popup' || variant === 'sidepanel';
+  const isSidepanel = variant === 'sidepanel';
 
   useEffect(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(opts)), [opts]);
   useEffect(() => () => items.forEach((i) => URL.revokeObjectURL(i.preview)), []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -75,6 +76,19 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
         .catch((e) => patch(item.id, { status: 'error', error: errorCode(e) }));
     }
   }, []);
+
+  const addFromUrl = useCallback(async (urlStr: string) => {
+    try {
+      const res = await fetch(urlStr);
+      const blob = await res.blob();
+      const rawName = urlStr.split('/').pop()?.split('?')[0] || 'image.png';
+      const name = rawName.includes('.') ? rawName : `${rawName}.png`;
+      const file = new File([blob], name, { type: blob.type || 'image/png' });
+      addFiles([file]);
+    } catch (err) {
+      console.warn('[MetaStrip] Could not fetch dragged URL:', err);
+    }
+  }, [addFiles]);
 
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
@@ -106,13 +120,27 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
   const ready = items.filter((i) => i.status === 'ready');
 
   return (
-    <div className={`flex flex-col gap-4 text-zinc-900 dark:text-zinc-100 ${popup ? 'w-[400px] p-4' : 'mx-auto w-full max-w-5xl p-4 sm:p-8'}`}>
-      <header className="flex items-center justify-between gap-3">
+    <div
+      className={`flex flex-col gap-4 text-zinc-900 dark:text-zinc-100 ${
+        isSidepanel
+          ? 'w-full min-h-screen p-4 max-w-full'
+          : variant === 'popup'
+            ? 'w-[400px] p-4'
+            : 'mx-auto w-full max-w-5xl p-4 sm:p-8'
+      }`}
+    >
+      <header className="flex items-center justify-between gap-3 pb-1 border-b border-zinc-200/80 dark:border-zinc-800">
         <div className="flex items-center gap-2.5">
-          <Logo />
+          <Logo className="size-8" />
           <div>
-            <h1 className="text-base font-semibold tracking-tight">MetaStrip</h1>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">{t.tagline}</p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-base font-semibold tracking-tight">MetaStrip</h1>
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                100% Local
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{t.tagline}</p>
           </div>
         </div>
         {onOpenFull && (
@@ -122,12 +150,7 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
         )}
       </header>
 
-      <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-        <ShieldCheck className="size-4 shrink-0" />
-        {t.privacy}
-      </div>
-
-      <div className={popup ? 'flex flex-col gap-4' : 'grid gap-6 lg:grid-cols-[1fr_300px]'}>
+      <div className={isCompact ? 'flex flex-col gap-4' : 'grid gap-6 lg:grid-cols-[1fr_300px]'}>
         <div className="flex min-w-0 flex-col gap-4">
           <button
             type="button"
@@ -137,17 +160,30 @@ export function MetaStripApp({ variant = 'page', onOpenFull }: MetaStripAppProps
               setDragging(true);
             }}
             onDragLeave={() => setDragging(false)}
-            onDrop={(e) => {
+            onDrop={async (e) => {
               e.preventDefault();
               setDragging(false);
-              addFiles(e.dataTransfer.files);
+              if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                addFiles(e.dataTransfer.files);
+              } else {
+                const uri = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
+                if (uri && (uri.startsWith('http') || uri.startsWith('blob:') || uri.startsWith('data:'))) {
+                  await addFromUrl(uri);
+                } else {
+                  const html = e.dataTransfer.getData('text/html');
+                  if (html) {
+                    const match = html.match(/src=["'](.*?)["']/);
+                    if (match && match[1]) await addFromUrl(match[1]);
+                  }
+                }
+              }
             }}
             className={`group flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 text-center transition ${
-              popup ? 'py-7' : 'py-14'
+              isCompact ? 'py-8' : 'py-14'
             } ${
               dragging
-                ? 'border-emerald-500 bg-emerald-500/5'
-                : 'border-zinc-300 hover:border-emerald-400 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900'
+                ? 'border-emerald-500 bg-emerald-500/10 scale-[1.01]'
+                : 'border-zinc-300 hover:border-emerald-400 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900/60'
             }`}
           >
             <span className="grid size-11 place-items-center rounded-full bg-zinc-100 text-zinc-600 transition group-hover:scale-105 group-hover:text-emerald-600 dark:bg-zinc-800 dark:text-zinc-300">

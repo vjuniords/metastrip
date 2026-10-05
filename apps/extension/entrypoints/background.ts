@@ -4,7 +4,20 @@ const MENU_ID = 'metastrip-clean-download';
 const MAX_BYTES = 100 * 1024 * 1024;
 
 export default defineBackground(() => {
+  // Abre o Painel Lateral ao clicar no ícone da extensão (igual ao Mimik)
+  const configureSidePanel = () => {
+    const sp = (browser as any).sidePanel ?? (globalThis as any).chrome?.sidePanel;
+    if (sp?.setPanelBehavior) {
+      sp.setPanelBehavior({ openPanelOnActionClick: true }).catch((err: unknown) => {
+        console.warn('[MetaStrip] setPanelBehavior error:', err);
+      });
+    }
+  };
+
+  configureSidePanel();
+
   browser.runtime.onInstalled.addListener(() => {
+    configureSidePanel();
     browser.contextMenus.create({
       id: MENU_ID,
       title: browser.i18n.getUILanguage().startsWith('pt') ? 'Baixar sem metadados (MetaStrip)' : 'Download without metadata (MetaStrip)',
